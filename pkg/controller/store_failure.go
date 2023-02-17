@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/client"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"net/http"
 	"time"
@@ -15,7 +16,7 @@ var CurrentTime = func() time.Time {
 	return time.Now()
 }
 
-// follows GCP's pubsub payload structure
+// StoreFailureRequestBody follows GCP's pubsub payload structure
 type StoreFailureRequestBody struct {
 	Message struct {
 		Data        types.Log `json:"data"`
@@ -26,21 +27,20 @@ type StoreFailureRequestBody struct {
 }
 
 type Failure struct {
-	Timestamp time.Time
-	Log       types.Log // holds all the event data, including tx hash, log index, and contract address
-	MessageID string    // pub/sub message ID
+	Timestamp time.Time `bson:"timestamp"`
+	Log       types.Log `bson:"log"`       // holds all the event data, including tx hash, log index, and contract address
+	MessageID string    `bson:"messageID"` // pub/sub message ID
 
 	// below field values come from the Log (pulling them out into separate fields for ease of viewing)
-	Tx       string
-	LogIndex string
-	Contract string
+	Tx       string `bson:"txn"`
+	LogIndex string `bson:"logIndex"`
+	Contract string `bson:"contract"`
 }
 
-// Simple controller that stores failures to mongoDB.
+// StoreFailure Simple controller that stores failures to mongoDB.
 func (ctrl Controller) StoreFailure(c *gin.Context) {
 	const (
 		location   = "Controller.StoreFailure"
-		database   = ""
 		collection = "failures"
 	)
 
@@ -50,6 +50,8 @@ func (ctrl Controller) StoreFailure(c *gin.Context) {
 		mongo       client.IMongoDBClient
 		failures    client.IMongoDBCollection
 	)
+
+	var database = common.DB_NAME
 
 	if err = c.BindJSON(&requestBody); err != nil {
 		errorCommon.RaiseBadRequestError(c, err, location, "Failed to unmarshal request body")
@@ -64,7 +66,7 @@ func (ctrl Controller) StoreFailure(c *gin.Context) {
 	newFailure := parseFailure(message.Data, message.MessageID)
 
 	if _, err = failures.InsertOne(c, newFailure); err != nil {
-		errorCommon.RaiseBadRequestError(c, err, location, "Failed to store parse event failure")
+		errorCommon.RaiseInternalServerError(c, err, location, "Failed to store parse event failure")
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Parsing event failure for txn %s on contract %s successfully stored", newFailure.Tx, newFailure.Contract)})
