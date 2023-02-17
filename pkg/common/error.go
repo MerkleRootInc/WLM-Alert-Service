@@ -13,11 +13,11 @@ import (
 
 type ErrorMsg string
 
-type EventParserErrCode int
+type AlertErrCode int
 
 type EventParserErrOpts struct {
 	// HTTP code that will be appended to response
-	Code *EventParserErrCode
+	Code *AlertErrCode
 
 	// The function name wherein the error occurred
 	Location string
@@ -29,17 +29,17 @@ type EventParserErrOpts struct {
 	Address string
 
 	// The tokenId corresponding to the event that failed to be parsed resulting in the error
-	TokenID string
+	TxHash string
 }
 
 var (
-	StatusInternalServerError EventParserErrCode = http.StatusInternalServerError
-	StatusBadRequest          EventParserErrCode = http.StatusBadRequest
-	StatusForbidden           EventParserErrCode = http.StatusForbidden
-	StatusUnauthorized        EventParserErrCode = http.StatusUnauthorized
-	StatusNotFound            EventParserErrCode = http.StatusNotFound
+	StatusInternalServerError AlertErrCode = http.StatusInternalServerError
+	StatusBadRequest          AlertErrCode = http.StatusBadRequest
+	StatusForbidden           AlertErrCode = http.StatusForbidden
+	StatusUnauthorized        AlertErrCode = http.StatusUnauthorized
+	StatusNotFound            AlertErrCode = http.StatusNotFound
 
-	errMsgs = map[EventParserErrCode]string{
+	errMsgs = map[AlertErrCode]string{
 		StatusInternalServerError: "Internal server error.",
 		StatusBadRequest:          "Bad request.",
 		StatusForbidden:           "Invalid credentials.",
@@ -48,12 +48,12 @@ var (
 	}
 )
 
-// Appends a generic error message and status code to a Gin response and logs the actual error
-func RaiseEventParserErr(requestContext *gin.Context, opts EventParserErrOpts, err error) {
+// RaiseAlertErr Appends a generic error message and status code to a Gin response and logs the actual error
+func RaiseAlertErr(requestContext *gin.Context, opts EventParserErrOpts, err error) {
 	logLine := fmt.Sprintf(": %s", err.Error())
 
-	if opts.TokenID != "" {
-		logLine = fmt.Sprintf("[tokenId=%s]%s", opts.TokenID, logLine)
+	if opts.TxHash != "" {
+		logLine = fmt.Sprintf("[txHash=%s]%s", opts.TxHash, logLine)
 	}
 	if opts.Address != "" {
 		logLine = fmt.Sprintf("[address=%s]%s", opts.Address, logLine)

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/common"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 
 	errorCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/error"
 )

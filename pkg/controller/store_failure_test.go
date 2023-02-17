@@ -6,7 +6,7 @@ import (
 	"fmt"
 	abiCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/model"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/test"
-	parseCommon "github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/common"
+	parseCommon "github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"

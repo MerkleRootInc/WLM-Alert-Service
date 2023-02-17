@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/client"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/client"
 )
 
 /*
