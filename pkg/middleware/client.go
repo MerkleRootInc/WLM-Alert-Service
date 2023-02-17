@@ -19,27 +19,27 @@ func InitClients(clients client.IClients, err common.ClientInitErr) gin.HandlerF
 
 		// return an internal server error if any clients had trouble initializing
 		if err.Mdb != nil {
-			common.RaiseEventParserErr(c, errOpts, err.Mdb)
+			common.RaiseAlertErr(c, errOpts, err.Mdb)
 			c.Abort()
 
 			return
 		} else if err.Eth != nil {
-			common.RaiseEventParserErr(c, errOpts, err.Eth)
+			common.RaiseAlertErr(c, errOpts, err.Eth)
 			c.Abort()
 
 			return
 		} else if err.Ps != nil {
-			common.RaiseEventParserErr(c, errOpts, err.Ps)
+			common.RaiseAlertErr(c, errOpts, err.Ps)
 			c.Abort()
 
 			return
 		} else if err.Sm != nil {
-			common.RaiseEventParserErr(c, errOpts, err.Sm)
+			common.RaiseAlertErr(c, errOpts, err.Sm)
 			c.Abort()
 
 			return
 		} else if err.Cs != nil {
-			common.RaiseEventParserErr(c, errOpts, err.Cs)
+			common.RaiseAlertErr(c, errOpts, err.Cs)
 			c.Abort()
 
 			return

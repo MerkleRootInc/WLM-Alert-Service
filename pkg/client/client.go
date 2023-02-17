@@ -9,7 +9,7 @@ import (
 	"cloud.google.com/go/pubsub"
 	"cloud.google.com/go/storage"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/client"
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/common"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -53,12 +53,13 @@ func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients 
 // Note: Once CallContract is added to the IEthClient interface in the common package,
 // all of the below can be removed
 type Clients struct {
-	Cs   ICloudStorageClient
+	Cs   client.ICloudStorageClient
 	Ps   client.IPubSubClient
 	Mdb  client.IMongoDBClient
-	Eth  IEthClient
+	Eth  client.IEthClient
 	Sm   client.ISecretsManagerClient
 	Http client.IHttpClient
+	Sg   client.ISendGridClient
 }
 
 // Creates a new Ethereum client
@@ -123,7 +124,7 @@ func (c *Clients) InitCloudStorageClient(ctx context.Context, gcpProjectId strin
 		return err
 	}
 
-	c.Cs = CloudStorageClient(*cs)
+	c.Cs = client.CloudStorageClient(*cs)
 
 	return nil
 }
@@ -168,7 +169,7 @@ func (c *Clients) GetMdb() client.IMongoDBClient {
 }
 
 // Retrieves Cloud Storage client instance
-func (c *Clients) GetCs() ICloudStorageClient {
+func (c *Clients) GetCs() client.ICloudStorageClient {
 	return c.Cs
 }
 
@@ -178,7 +179,7 @@ func (c *Clients) GetPs() client.IPubSubClient {
 }
 
 // Retrieves Ethereum client instance
-func (c *Clients) GetEth() IEthClient {
+func (c *Clients) GetEth() client.IEthClient {
 	return c.Eth
 }
 
@@ -193,6 +194,10 @@ func (c *Clients) GetSm() client.ISecretsManagerClient {
 }
 
 // Replaces the ethereum client with a new instance
-func (c *Clients) SetEth(eth IEthClient) {
+func (c *Clients) SetEth(eth client.IEthClient) {
 	c.Eth = eth
+}
+
+func (c *Clients) GetSg() client.ISendGridClient {
+	return c.Sg
 }
