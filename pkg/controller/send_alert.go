@@ -12,7 +12,7 @@ import (
 	errorCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/error"
 )
 
-// follows GCP's pubsub payload structure
+// SendAlertRequestBody follows GCP's pubsub payload structure
 type SendAlertRequestBody struct {
 	Message struct {
 		Data common.EmailAlert `json:"data"`
@@ -21,7 +21,7 @@ type SendAlertRequestBody struct {
 	Subscription string `json:"subscription"`
 }
 
-// Simple controller that sends out emails when it receives a message from a
+// SendAlert Simple controller that sends out emails when it receives a message from a
 // PubSub topic. Will probably want to make this more robust/swap out technology later on.
 func (ctrl Controller) SendAlert(c *gin.Context) {
 	const location = "Controller.SendAlert"
