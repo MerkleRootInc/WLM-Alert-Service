@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	abiCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/model"
-	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/test"
-	parseCommon "github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
@@ -17,20 +14,6 @@ import (
 	"testing"
 	"time"
 )
-
-var emailAlert = parseCommon.EmailAlert{
-	DocID:        "",
-	ParseFailure: abiCommon.ParseFailure{},
-}
-
-var (
-	clients test.ClientMock
-	ctx     *gin.Context
-)
-
-type TestSuite struct {
-	suite.Suite
-}
 
 func TestTestSuite(t *testing.T) {
 	suite.Run(t, &TestSuite{})

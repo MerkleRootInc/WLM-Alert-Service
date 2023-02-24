@@ -3,12 +3,17 @@ package controller
 import (
 	"crypto/ecdsa"
 	"encoding/json"
+	"time"
+
+	abiCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/model"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/test"
+	parseCommon "github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
-	"time"
+	"github.com/stretchr/testify/suite"
 )
 
 var privateKey, err = crypto.GenerateKey()
@@ -26,6 +31,20 @@ var TestLog1 = types.Log{
 	BlockHash:   common.HexToHash("0"),
 	Index:       uint(0),
 	Removed:     false,
+}
+
+var emailAlert = parseCommon.EmailAlert{
+	DocID:        "",
+	ParseFailure: abiCommon.ParseFailure{},
+}
+
+var (
+	clients test.ClientMock
+	ctx     *gin.Context
+)
+
+type TestSuite struct {
+	suite.Suite
 }
 
 func GetTestRequest(log *types.Log) ([]byte, error) {
@@ -57,5 +76,6 @@ func InitializeClientMocks(mock *test.ClientMock, c *gomock.Controller) {
 		Redis:   test.RedisMock{},
 		Sm:      test.SmMock{},
 		Sg:      test.SgMock{},
+		Gmail:   test.GmailMock{},
 	}
 }
