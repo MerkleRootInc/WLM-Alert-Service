@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"encoding/base64"
 	"fmt"
+	"google.golang.org/api/gmail/v1"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/sendgrid/sendgrid-go/helpers/mail"
-
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
+	"github.com/gin-gonic/gin"
 
 	errorCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/error"
 )
@@ -26,6 +26,19 @@ type SendAlertRequestBody struct {
 func (ctrl Controller) SendAlert(c *gin.Context) {
 	const location = "Controller.SendAlert"
 
+	g := ctrl.Clients.GetGmail()
+
+	emailBody := "Test Message"
+
+	var alert gmail.Message
+
+	emailTo := "To: menorton15@hotmail.com\r\n"
+	subject := "Subject: " + "Test Email form Gmail API using OAuth" + "\n"
+	mime := "MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";\n\n"
+	msg := []byte(emailTo + subject + mime + "\n" + emailBody)
+
+	alert.Raw = base64.URLEncoding.EncodeToString(msg)
+	g.Send(&alert)
 	// unmarshal the request body
 	var (
 		err         error
@@ -36,72 +49,5 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 		return
 	}
 
-	var (
-		failure = requestBody.Message.Data.ParseFailure
-		client  = ctrl.Clients.GetSg()
-
-		from    = mail.NewEmail("NFT Marketplace Staging", "noah.mcgill@merkleroot.co")
-		subject = fmt.Sprintf("Max Retries Reached for Failure with Document ID of %s", requestBody.Message.Data.DocID)
-
-		plainTextContent = fmt.Sprintf(`
-			The Event Parser Service has failed to parse an event for a tokenId of %s on contract %s after 12 retries. Parsing of this event will no longer 
-			be retried, and a record of this failure has been added to the "inactiveParseFailures" collection in Firestore.
-		`, failure.TokenID, failure.Contract)
-
-		htmlContent = fmt.Sprintf(`
-			<h4>Max Retries Reached for Failure with Document ID of %s</h4>
-			<p>
-				The Event Parser Service has failed to parse an event for a tokenId of %s on contract %s after 12 retries. 
-				Parsing of this event will no longer be retried, and a record of this failure has been added to the "inactiveParseFailures" collection in Firestore.
-				<br />
-			</p>
-			<p>
-				To debug:
-				<ul>
-					<li>Go to Firestore</li>
-					<li>Go to the inactiveParseFailures collection</li>
-					<li>Find the document with the ID of %s</li>
-					<li>Read the "error" field to find out what error occurred</li>
-				</ul>
-			</p>
-			<p>
-				This parsing failure will not be retried again.
-			</p>
-		`, requestBody.Message.Data.DocID, failure.TokenID, failure.Contract, requestBody.Message.Data.DocID)
-
-		// define the recipient email addresses - just leaving these hard-coded for now
-		contacts = [3]struct {
-			name  string
-			email string
-		}{
-			{
-				name:  "Noah McGill",
-				email: "noah.mcgill@merkleroot.co",
-			},
-			{
-				name:  "Brandon Brown",
-				email: "brandon.brown@merkleroot.co",
-			},
-			{
-				name:  "Brandyn Thibault",
-				email: "brandyn.thibault@merkleroot.co",
-			},
-		}
-	)
-
-	for _, contact := range contacts {
-		var (
-			to      = mail.NewEmail(contact.name, contact.email)
-			message = mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-		)
-
-		if _, err := client.Send(message); err != nil {
-			msg := fmt.Sprintf("Error while sending maxRetry email notification about token %s on contract %s to address %s via SendGrid", failure.TokenID, failure.Contract, contact.email)
-
-			errorCommon.RaiseInternalServerError(c, err, location, msg)
-			return
-		}
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Parsing event failure notifications for token %s on contract %s successfully sent", failure.TokenID, failure.Contract)})
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
 }
