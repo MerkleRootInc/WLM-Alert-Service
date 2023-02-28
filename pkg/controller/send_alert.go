@@ -38,16 +38,16 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 	msg := []byte(emailTo + subject + mime + "\n" + emailBody)
 
 	alert.Raw = base64.URLEncoding.EncodeToString(msg)
-	g.Send(&alert)
 	// unmarshal the request body
-	var (
-		err         error
-		requestBody SendAlertRequestBody
-	)
-	if err = c.BindJSON(&requestBody); err != nil {
-		errorCommon.RaiseBadRequestError(c, err, location, "Failed to unmarshal request body")
+
+	response, err := g.Send(&alert)
+
+	if err != nil {
+		errorCommon.RaiseInternalServerError(c, err, location, "Failed to send daily alert")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
+	if response.HTTPStatusCode == http.StatusOK {
+		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
+	}
 }
