@@ -43,7 +43,11 @@ var (
 	ctx     *gin.Context
 )
 
-type TestSuite struct {
+type AlertTestSuite struct {
+	suite.Suite
+}
+
+type FailureTestSuite struct {
 	suite.Suite
 }
 
@@ -76,6 +80,7 @@ func InitializeClientMocks(mock *test.ClientMock, c *gomock.Controller) {
 		Redis:   test.RedisMock{},
 		Sm:      test.SmMock{},
 		Sg:      test.SgMock{},
-		Gmail:   test.GmailMock{},
+		Gmail:   test.GmailMock{Client: test.NewMockIGmailClient(c)},
 	}
+
 }

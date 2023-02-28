@@ -15,18 +15,20 @@ import (
 	"time"
 )
 
-func TestTestSuite(t *testing.T) {
-	suite.Run(t, &TestSuite{})
+func TestStoreFailure(t *testing.T) {
+	suite.Run(t, &FailureTestSuite{})
 }
 
-func (suite *TestSuite) SetupSuite() {
+func (suite *FailureTestSuite) SetupSuite() {
 	expectedYear := 2022
 	currentInstant := time.Date(expectedYear, 12, 01, 00, 00, 00, 0, time.UTC)
 	// Make 'CurrentTime' return hard-coded time in tests
 	CurrentTime = func() time.Time {
 		return currentInstant
 	}
+}
 
+func (suite *FailureTestSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	ctx, _ = gin.CreateTestContext(w)
@@ -35,10 +37,6 @@ func (suite *TestSuite) SetupSuite() {
 	c := gomock.NewController(suite.T())
 	defer c.Finish()
 	InitializeClientMocks(&clients, c)
-
-}
-
-func (suite *TestSuite) SetupTest() {
 
 	requestData, err := GetTestRequest(&TestLog1)
 
@@ -50,7 +48,7 @@ func (suite *TestSuite) SetupTest() {
 
 }
 
-func (suite *TestSuite) TestStoreFailureError() {
+func (suite *FailureTestSuite) TestStoreFailureError() {
 
 	ctrl := Controller{Clients: clients.Clients}
 
@@ -67,12 +65,12 @@ func (suite *TestSuite) TestStoreFailureError() {
 	clients.Clients.EXPECT().GetMdb().Return(clients.Mdb.Client)
 	clients.Mdb.Client.EXPECT().Database(gomock.Eq("")).Return(clients.Mdb.Database)
 	clients.Mdb.Database.EXPECT().Collection(gomock.Eq("failures")).Return(clients.Mdb.Collection)
-	clients.Mdb.Collection.EXPECT().InsertOne(gomock.Eq(ctx), gomock.Eq(&newFailure)).Return(nil, errors.New("failed to store failure"))
+	clients.Mdb.Collection.EXPECT().InsertOne(gomock.Eq(ctx), gomock.Eq(&newFailure)).Return(nil, errors.New("test error message"))
 
 	ctrl.StoreFailure(ctx)
 }
 
-func (suite *TestSuite) TestStoreFailureSuccess() {
+func (suite *FailureTestSuite) TestStoreFailureSuccess() {
 
 	ctrl := Controller{Clients: clients.Clients}
 
