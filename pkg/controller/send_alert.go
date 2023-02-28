@@ -28,6 +28,7 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 
 	g := ctrl.Clients.GetGmail()
 
+	//TODO: Replace with logic that returns list of failures for the day
 	emailBody := "Test Message"
 
 	var alert gmail.Message
