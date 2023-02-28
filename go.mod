@@ -11,6 +11,7 @@ require (
 	github.com/ethereum/go-ethereum v1.11.2
 	github.com/gin-gonic/gin v1.9.0
 	github.com/golang/mock v1.6.0
+	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
 	go.mongodb.org/mongo-driver v1.11.2
 	golang.org/x/oauth2 v0.5.0
