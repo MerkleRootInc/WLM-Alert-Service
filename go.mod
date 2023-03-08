@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/secretmanager v1.10.0
 	cloud.google.com/go/storage v1.29.0
 	github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.11
-	github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230217155952-fad311f86bcd
+	github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230308165458-6539351b0269
 	github.com/ethereum/go-ethereum v1.11.3
 	github.com/gin-gonic/gin v1.9.0
 	github.com/golang/mock v1.6.0

@@ -26,6 +26,8 @@ github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.11 h1:Z247M4V8DUvH6si8stC
 github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.11/go.mod h1:ZTyf6X/2mzB5Ovf2kuPtAYRv0EasqHzx2RSUkTfvuj0=
 github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230217155952-fad311f86bcd h1:RuttkOJuLFTxsFQyKDl+K1NFLAvI+X5oUYhoI67k27w=
 github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230217155952-fad311f86bcd/go.mod h1:iJ2M++LqHrWmF79AfzGEKnaVzgsoYeGhVGAHaUUAsSg=
+github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230308165458-6539351b0269 h1:rXsZWl5My4boYz7NhsGLwfWRA4wVqP+0TOoUQ+JkZA4=
+github.com/MerkleRootInc/WLM-Event-Parser-Service v0.0.0-20230308165458-6539351b0269/go.mod h1:tcs2W0augXoNPse1FpGQfZLblGe9DkU8O6XgbGt+Fcc=
 github.com/MicahParks/keyfunc v1.9.0 h1:lhKd5xrFHLNOWrDc4Tyb/Q1AJ4LCzQ48GVJyVIID3+o=
 github.com/MicahParks/keyfunc v1.9.0/go.mod h1:IdnCilugA0O/99dW+/MkvlyrsX8+L8+x95xuVNtM5jw=
 github.com/VictoriaMetrics/fastcache v1.6.0 h1:C/3Oi3EiBCqufydp1neRZkqcwmEiuRT9c3fqvvgKm5o=
