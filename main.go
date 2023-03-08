@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/client"
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/common"
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/controller"
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/middleware"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/client"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/controller"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,14 +31,12 @@ func setupRouter() *gin.Engine {
 
 	// set up the middleware
 	var (
-		initClients   = middleware.InitClients(clients, clientsErr)
-		bindContracts = middleware.BindContract(clients)
+		initClients = middleware.InitClients(clients, clientsErr)
 	)
 
 	router.Use(initClients)
-	router.Use(bindContracts)
 
-	router.POST("/parse-event", ctrl.ParseEvent)
+	router.POST("/send-alert", ctrl.SendAlert)
 
 	return router
 }
