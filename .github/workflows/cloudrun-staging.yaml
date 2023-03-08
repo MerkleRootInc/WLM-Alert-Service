@@ -121,9 +121,6 @@ jobs:
             ENVIRONMENT=${{ env.ENVIRONMENT }}
             GCP_PROJECT_ID=${{ env.PROJECT_ID }}
             LAND_ADDRESS=${{ env.LAND_ADDRESS }}
-            SENDGRID_API_KEY_SECRET_NAME=${{ env.SENDGRID_API_KEY_SECRET_NAME }}
-            UNICORN_ADDRESS=${{ env.UNICORN_ADDRESS }}
-            MEDIA_BUCKT_NAME=${{ env.MEDIA_BUCKT_NAME }}
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
