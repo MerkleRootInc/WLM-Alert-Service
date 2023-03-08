@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"encoding/base64"
 	"fmt"
-	"google.golang.org/api/gmail/v1"
 	"net/http"
+	"net/smtp"
+	"time"
 
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/gin-gonic/gin"
@@ -26,29 +26,32 @@ type SendAlertRequestBody struct {
 func (ctrl Controller) SendAlert(c *gin.Context) {
 	const location = "Controller.SendAlert"
 
-	g := ctrl.Clients.GetGmail()
+	//g := ctrl.Clients.GetGmail()
+
+	emailHost := ctrl.Env.SmtpHost      ///"smtp.gmail.com"
+	emailFrom := ctrl.Env.GmailUser     ///email
+	emailPassword := ctrl.Env.GmailPass ///password
+	emailPort := ctrl.Env.Port          ///587
+
+	emailAuth := smtp.PlainAuth("", emailFrom, emailPassword, emailHost)
 
 	//TODO: Replace with logic that returns list of failures for the day
 	emailBody := "Test Message"
 
-	var alert gmail.Message
-
-	emailTo := "To: menorton15@hotmail.com\r\n"
-	subject := "Subject: " + "Test Email form Gmail API using OAuth" + "\n"
+	year, month, day := time.Now().Date()
+	date := fmt.Sprintf("%v/%v/%v", year, month, day)
+	emailTo := []string{"matthew.norton@merkleroot.co", "brandyn.thibault@merkleroot.co", "brandon.brown@merkleroot.co", "noah.mcgill@merkleroot.co"}
+	subject := "Subject: Daily Failure Report - " + date + "\n"
 	mime := "MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";\n\n"
-	msg := []byte(emailTo + subject + mime + "\n" + emailBody)
+	msg := []byte(subject + mime + "\n" + emailBody)
+	addr := fmt.Sprintf("%s:%v", emailHost, emailPort)
 
-	alert.Raw = base64.URLEncoding.EncodeToString(msg)
-	// unmarshal the request body
-
-	response, err := g.Send(&alert)
+	err := smtp.SendMail(addr, emailAuth, emailFrom, emailTo, msg)
 
 	if err != nil {
 		errorCommon.RaiseInternalServerError(c, err, location, "Failed to send daily alert")
 		return
 	}
 
-	if response.HTTPStatusCode == http.StatusOK {
-		c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
-	}
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
 }
