@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/client"
-	"github.com/MerkleRootInc/WLM-Event-Parser-Service/pkg/common"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/client"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/gin-gonic/gin"
 )
 
