@@ -28,6 +28,10 @@ RUN go build -o /alert-service
 FROM alpine:latest
 WORKDIR /
 COPY --from=builder /alert-service /alert-service
+COPY --from=builder /lib /lib
+COPY --from=builder /usr/share /usr/share
+COPY --from=builder /usr/include /usr/include
+COPY --from=builder /usr/lib /usr/lib
 
 EXPOSE 8080
 
