@@ -17,11 +17,12 @@ Errors
 */
 
 type ClientInitErr struct {
-	Cs  error
-	Eth error
-	Mdb error
-	Sm  error
-	Ps  error
+	Cs      error
+	Eth     error
+	Mdb     error
+	Sm      error
+	Ps      error
+	Secrets error
 }
 
 /*
