@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/client"
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/controller"
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/middleware"
 	"github.com/gin-gonic/gin"
+	"net/smtp"
 )
 
 func main() {
@@ -24,10 +24,16 @@ func setupRouter() *gin.Engine {
 	var (
 		router     = gin.Default()
 		ctx        = context.Background()
+		env        = common.LoadEnv()
 		clientsErr = common.ClientInitErr{}
-		clients    = client.InitializeClients(ctx, &clientsErr)
-		ctrl       = controller.Controller{Clients: clients}
 	)
+
+	if env.STAGE == "PROD" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	clients := client.InitializeClients(ctx, &clientsErr, env)
+	ctrl := controller.Controller{Clients: clients, Env: env, Send: smtp.SendMail}
 
 	// set up the middleware
 	var (

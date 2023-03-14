@@ -2,12 +2,14 @@ package controller
 
 import (
 	"errors"
+	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
-	"google.golang.org/api/googleapi"
 	"net/http"
 	"net/http/httptest"
+	"net/smtp"
+	"os"
 	"testing"
 )
 
@@ -28,23 +30,58 @@ func (suite *AlertTestSuite) SetupTest() {
 }
 
 func (suite *AlertTestSuite) TestSendAlertSuccess() {
+	env := common.Env{
+		SMTP_PORT:            os.Getenv("SMTP_PORT"),
+		STAGE:                os.Getenv("ENVIRONMENT"),
+		GCP_PROJECT_ID:       os.Getenv("PROJECT_ID"),
+		SMTP_HOST:            os.Getenv("SMTP_HOST"),
+		GMAIL_SECRET_NAME:    "",
+		GMAIL_PASS_NAME:      "",
+		MDB_USER_SECRET_NAME: "",
+		MDB_PASS_SECRET_NAME: "",
+		DB_SECRET_NAME:       "",
+		Secrets: common.Secrets{
+			GMAIL_USER: os.Getenv("GMAIL_USER"),
+			GMAIL_PASS: os.Getenv("GMAIL_PASS"),
+		},
+	}
 
-	ctrl := Controller{Clients: clients.Clients}
-
-	clients.Clients.EXPECT().GetGmail().Return(clients.Gmail.Client)
-	clients.Gmail.Client.EXPECT().Send(gomock.Any()).Return(&googleapi.ServerResponse{HTTPStatusCode: http.StatusOK, Header: http.Header{}}, nil)
+	ctrl := Controller{
+		Clients: clients.Clients,
+		Env:     &env,
+		Send: func(string, smtp.Auth, string, []string, []byte) error {
+			return nil
+		},
+	}
 
 	ctrl.SendAlert(ctx)
 	suite.Equal(http.StatusOK, ctx.Writer.Status(), "incorrect status code returned")
 }
 
 func (suite *AlertTestSuite) TestSendAlertFailure() {
+	env := common.Env{
+		SMTP_PORT:            os.Getenv("SMTP_PORT"),
+		STAGE:                os.Getenv("ENVIRONMENT"),
+		GCP_PROJECT_ID:       os.Getenv("PROJECT_ID"),
+		SMTP_HOST:            os.Getenv("SMTP_HOST"),
+		GMAIL_SECRET_NAME:    "",
+		GMAIL_PASS_NAME:      "",
+		MDB_USER_SECRET_NAME: "",
+		MDB_PASS_SECRET_NAME: "",
+		DB_SECRET_NAME:       "",
+		Secrets: common.Secrets{
+			GMAIL_USER: os.Getenv("GMAIL_USER"),
+			GMAIL_PASS: os.Getenv("GMAIL_PASS"),
+		},
+	}
 
-	ctrl := Controller{Clients: clients.Clients}
-
-	clients.Clients.EXPECT().GetGmail().Return(clients.Gmail.Client)
-	clients.Gmail.Client.EXPECT().Send(gomock.Any()).Return(&googleapi.ServerResponse{
-		HTTPStatusCode: http.StatusInternalServerError, Header: http.Header{}}, errors.New("test error message"))
+	ctrl := Controller{
+		Clients: clients.Clients,
+		Env:     &env,
+		Send: func(string, smtp.Auth, string, []string, []byte) error {
+			return errors.New("test error")
+		},
+	}
 
 	ctrl.SendAlert(ctx)
 	suite.Equal(http.StatusInternalServerError, ctx.Writer.Status(), "incorrect status code returned")

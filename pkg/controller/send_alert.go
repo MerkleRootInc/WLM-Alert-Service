@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/smtp"
 	"time"
@@ -28,10 +29,10 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 
 	//g := ctrl.Clients.GetGmail()
 
-	emailHost := ctrl.Env.SmtpHost      ///"smtp.gmail.com"
-	emailFrom := ctrl.Env.GmailUser     ///email
-	emailPassword := ctrl.Env.GmailPass ///password
-	emailPort := ctrl.Env.Port          ///587
+	emailHost := ctrl.Env.SMTP_HOST      ///"smtp.gmail.com"
+	emailFrom := ctrl.Env.GMAIL_USER     ///email
+	emailPassword := ctrl.Env.GMAIL_PASS ///password
+	emailPort := ctrl.Env.SMTP_PORT      ///587
 
 	emailAuth := smtp.PlainAuth("", emailFrom, emailPassword, emailHost)
 
@@ -46,7 +47,7 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 	msg := []byte(subject + mime + "\n" + emailBody)
 	addr := fmt.Sprintf("%s:%v", emailHost, emailPort)
 
-	err := smtp.SendMail(addr, emailAuth, emailFrom, emailTo, msg)
+	err := ctrl.Send(addr, emailAuth, emailFrom, emailTo, msg)
 
 	if err != nil {
 		errorCommon.RaiseInternalServerError(c, err, location, "Failed to send daily alert")
@@ -54,4 +55,25 @@ func (ctrl Controller) SendAlert(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
+}
+
+func (ctrl Controller) getFailures(c *gin.Context) string {
+	var response string
+
+	collection := ctrl.Clients.GetMdb().Database(ctrl.Env.Secrets.DB_NAME).Collection("failures")
+
+	result, _ := collection.Find(c, "test")
+
+	for result.Next(c) {
+		var failure Failure
+		if err := result.Decode(&failure); err != nil {
+			log.Fatal(err)
+		}
+		response = fmt.Sprintf("%v %v\n", response, result)
+	}
+	if err := result.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return response
 }

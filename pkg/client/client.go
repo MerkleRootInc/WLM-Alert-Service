@@ -1,33 +1,23 @@
 package client
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"golang.org/x/oauth2"
-	"google.golang.org/api/gmail/v1"
-	"google.golang.org/api/option"
-	"net/http"
-	"os"
-
 	"cloud.google.com/go/pubsub"
 	"cloud.google.com/go/storage"
+	"context"
+	"errors"
+	"fmt"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/client"
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net/http"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 )
 
-func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients {
-	var (
-		alchemyEndpoint string
-
-		clients = new(Clients)
-	)
+func InitializeClients(ctx context.Context, err *common.ClientInitErr, env *common.Env) IClients {
+	var clients = new(Clients)
 
 	if err == nil {
 		return &Clients{}
@@ -36,17 +26,13 @@ func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients 
 	// secrets manager
 	err.Sm = clients.InitSecretsManagerClient(ctx)
 
+	err.Secrets = common.LoadSecrets(ctx, clients.Sm, env)
+
 	// mongodb
-	err.Mdb = clients.InitMongoDBClient(ctx, 20, common.MONGO_DB_USER, common.MONGO_DB_PASS)
+	err.Mdb = clients.InitMongoDBClient(ctx, 20, env.Secrets.MDB_USER, env.Secrets.MDB_PASS)
 
 	// cloud storage
-	err.Cs = clients.InitCloudStorageClient(ctx, common.GCP_PROJECT_ID)
-
-	alchemyEndpoint, err.Eth = client.RetrieveSecret(ctx, clients.GetSm(), common.ALCHEMY_ENDPOINT_SECRET_NAME, common.GCP_PROJECT_ID)
-	if err.Eth == nil {
-		// eth
-		err.Eth = clients.InitEthClient(ctx, alchemyEndpoint)
-	}
+	err.Cs = clients.InitCloudStorageClient(ctx, env.GCP_PROJECT_ID)
 
 	clients.Http = &http.Client{}
 
@@ -58,14 +44,13 @@ func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients 
 // Note: Once CallContract is added to the IEthClient interface in the common package,
 // all of the below can be removed
 type Clients struct {
-	Cs    client.ICloudStorageClient
-	Ps    client.IPubSubClient
-	Mdb   client.IMongoDBClient
-	Eth   client.IEthClient
-	Sm    client.ISecretsManagerClient
-	Http  client.IHttpClient
-	Sg    client.ISendGridClient
-	Gmail client.IGmailClient
+	Cs   client.ICloudStorageClient
+	Ps   client.IPubSubClient
+	Mdb  client.IMongoDBClient
+	Eth  client.IEthClient
+	Sm   client.ISecretsManagerClient
+	Http client.IHttpClient
+	Sg   client.ISendGridClient
 }
 
 // Creates a new Ethereum client
@@ -206,25 +191,4 @@ func (c *Clients) SetEth(eth client.IEthClient) {
 
 func (c *Clients) GetSg() client.ISendGridClient {
 	return c.Sg
-}
-
-func (c *Clients) GetGmail() client.IGmailClient {
-	return c.Gmail
-}
-
-func (c *Clients) InitGmailClient(ctx context.Context, config *oauth2.Config) error {
-	// The file token.json stores the user's access and refresh tokens, and is
-	// created automatically when the authorization flow completes for the first
-	// time.
-	tokFile := "token.json"
-	f, err := os.Open(tokFile)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	tok := &oauth2.Token{}
-	err = json.NewDecoder(f).Decode(tok)
-	service, err := gmail.NewService(ctx, option.WithHTTPClient(config.Client(ctx, tok)))
-	c.Gmail = client.GmailClient(*service)
-	return err
 }

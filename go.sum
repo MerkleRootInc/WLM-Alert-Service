@@ -24,6 +24,18 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/DataDog/zstd v1.5.2 h1:vUG4lAyuPCXO0TLbXvPv7EB7cNK1QV/luu55UHLrrn8=
 github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.11 h1:Z247M4V8DUvH6si8stC5suC+k3dV6FYEClL+73YT3FI=
 github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.11/go.mod h1:ZTyf6X/2mzB5Ovf2kuPtAYRv0EasqHzx2RSUkTfvuj0=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308182744-d888f826f161 h1:wDR3XP0KPtgD12fkGEBq72/S0C4wrj0yb8hZY/ozeEM=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308182744-d888f826f161/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183330-964225bee60b h1:GWadFGNj1UKWO3x2qslJdTTPm7in/JCQ6XLM1q2GttM=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183330-964225bee60b/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183435-2ef75117588a h1:R3FJ89yy5d15timlN/5pu6b906Pogu5nRXqCuRBdS2I=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183435-2ef75117588a/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183943-39e903da505e h1:IbGNqyynjujrxmyA25PSnzEt7LesbQvlFIunancPPAQ=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308183943-39e903da505e/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308184025-9dd1b5d52bf1 h1:KS66deQOCWEk1CWT8m033BerjBg0HvcKb1eQ/rxhskw=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308184025-9dd1b5d52bf1/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308184319-687028b9c63b h1:cOx3StNPkw2yjPVoMQPNd5zbZHV2FNp0YPnRKCMklUg=
+github.com/MerkleRootInc/NFT-Marketplace-GoCommon v1.0.12-0.20230308184319-687028b9c63b/go.mod h1:82wHfeeUILMr/i1PtqrZZ77/OxEzMefeiw6afRS9qqY=
 github.com/MicahParks/keyfunc v1.9.0 h1:lhKd5xrFHLNOWrDc4Tyb/Q1AJ4LCzQ48GVJyVIID3+o=
 github.com/MicahParks/keyfunc v1.9.0/go.mod h1:IdnCilugA0O/99dW+/MkvlyrsX8+L8+x95xuVNtM5jw=
 github.com/VictoriaMetrics/fastcache v1.6.0 h1:C/3Oi3EiBCqufydp1neRZkqcwmEiuRT9c3fqvvgKm5o=
@@ -51,6 +63,7 @@ github.com/cpuguy83/go-md2man/v2 v2.0.2 h1:p1EgwI/C7NhT0JmVkwCD2ZBK8j4aeHQX2pMHH
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/deckarep/golang-set v1.8.0 h1:sk9/l/KqpunDwP7pSjUg0keiOOLEnOBHzykLrsPppp4=
 github.com/deckarep/golang-set/v2 v2.2.0 h1:2pMQd3Soi6qfw7E5MMKaEh5W5ES18bW3AbFFnGl6LgQ=
 github.com/deckarep/golang-set/v2 v2.2.0/go.mod h1:VAky9rY/yGXJOLEDv3OMci+7wtDpOF4IN+y82NBOac4=
 github.com/decred/dcrd/crypto/blake256 v1.0.0 h1:/8DMNYp9SGi5f0w7uCm6d6M4OU2rGFK09Y2A4Xv7EE0=
@@ -200,6 +213,8 @@ github.com/sendgrid/sendgrid-go v3.12.0+incompatible h1:/N2vx18Fg1KmQOh6zESc5FJB
 github.com/sendgrid/sendgrid-go v3.12.0+incompatible/go.mod h1:QRQt+LX/NmgVEvmdRw0VT/QgUn499+iza2FnDca9fg8=
 github.com/shirou/gopsutil v3.21.11+incompatible h1:+1+c1VGhc88SSonWP6foOcLhvnKlUeu/erjjvaPEYiI=
 github.com/shirou/gopsutil v3.21.11+incompatible/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=
+github.com/sirupsen/logrus v1.9.0 h1:trlNQbNUG3OdDrDil03MCb1H2o9nJ1x4/5LYw7byDE0=
+github.com/sirupsen/logrus v1.9.0/go.mod h1:naHLuLoDiP4jHNo9R0sCBMtWGeIprob74mVsIT4qYEQ=
 github.com/status-im/keycard-go v0.2.0 h1:QDLFswOQu1r5jsycloeQh3bVU8n/NatHHaZobtDnDzA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
@@ -300,6 +315,7 @@ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
