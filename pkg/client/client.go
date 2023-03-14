@@ -1,28 +1,23 @@
 package client
 
 import (
+	"cloud.google.com/go/pubsub"
+	"cloud.google.com/go/storage"
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
-
-	"cloud.google.com/go/pubsub"
-	"cloud.google.com/go/storage"
 	"github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/client"
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"net/http"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 )
 
-func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients {
-	var (
-		alchemyEndpoint string
-
-		clients = new(Clients)
-	)
+func InitializeClients(ctx context.Context, err *common.ClientInitErr, env *common.Env) IClients {
+	var clients = new(Clients)
 
 	if err == nil {
 		return &Clients{}
@@ -31,17 +26,13 @@ func InitializeClients(ctx context.Context, err *common.ClientInitErr) IClients 
 	// secrets manager
 	err.Sm = clients.InitSecretsManagerClient(ctx)
 
+	err.Secrets = common.LoadSecrets(ctx, clients.Sm, env)
+
 	// mongodb
-	err.Mdb = clients.InitMongoDBClient(ctx, 20, common.MONGO_DB_USER, common.MONGO_DB_PASS)
+	err.Mdb = clients.InitMongoDBClient(ctx, 20, env.Secrets.MDB_USER, env.Secrets.MDB_PASS)
 
 	// cloud storage
-	err.Cs = clients.InitCloudStorageClient(ctx, common.GCP_PROJECT_ID)
-
-	alchemyEndpoint, err.Eth = client.RetrieveSecret(ctx, clients.GetSm(), common.ALCHEMY_ENDPOINT_SECRET_NAME, common.GCP_PROJECT_ID)
-	if err.Eth == nil {
-		// eth
-		err.Eth = clients.InitEthClient(ctx, alchemyEndpoint)
-	}
+	err.Cs = clients.InitCloudStorageClient(ctx, env.GCP_PROJECT_ID)
 
 	clients.Http = &http.Client{}
 

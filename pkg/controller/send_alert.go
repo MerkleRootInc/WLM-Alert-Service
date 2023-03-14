@@ -2,17 +2,18 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"net/smtp"
+	"time"
 
 	"github.com/MerkleRootInc/WLM-Alert-Service/pkg/common"
+	"github.com/gin-gonic/gin"
 
 	errorCommon "github.com/MerkleRootInc/NFT-Marketplace-GoCommon/pkg/error"
 )
 
-// follows GCP's pubsub payload structure
+// SendAlertRequestBody follows GCP's pubsub payload structure
 type SendAlertRequestBody struct {
 	Message struct {
 		Data common.EmailAlert `json:"data"`
@@ -21,87 +22,58 @@ type SendAlertRequestBody struct {
 	Subscription string `json:"subscription"`
 }
 
-// Simple controller that sends out emails when it receives a message from a
+// SendAlert Simple controller that sends out emails when it receives a message from a
 // PubSub topic. Will probably want to make this more robust/swap out technology later on.
 func (ctrl Controller) SendAlert(c *gin.Context) {
 	const location = "Controller.SendAlert"
 
-	// unmarshal the request body
-	var (
-		err         error
-		requestBody SendAlertRequestBody
-	)
-	if err = c.BindJSON(&requestBody); err != nil {
-		errorCommon.RaiseBadRequestError(c, err, location, "Failed to unmarshal request body")
+	//g := ctrl.Clients.GetGmail()
+
+	emailHost := ctrl.Env.SMTP_HOST      ///"smtp.gmail.com"
+	emailFrom := ctrl.Env.GMAIL_USER     ///email
+	emailPassword := ctrl.Env.GMAIL_PASS ///password
+	emailPort := ctrl.Env.SMTP_PORT      ///587
+
+	emailAuth := smtp.PlainAuth("", emailFrom, emailPassword, emailHost)
+
+	//TODO: Replace with logic that returns list of failures for the day
+	emailBody := "Test Message"
+
+	year, month, day := time.Now().Date()
+	date := fmt.Sprintf("%v/%v/%v", year, month, day)
+	emailTo := []string{"matthew.norton@merkleroot.co", "brandyn.thibault@merkleroot.co", "brandon.brown@merkleroot.co", "noah.mcgill@merkleroot.co"}
+	subject := "Subject: Daily Failure Report - " + date + "\n"
+	mime := "MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";\n\n"
+	msg := []byte(subject + mime + "\n" + emailBody)
+	addr := fmt.Sprintf("%s:%v", emailHost, emailPort)
+
+	err := ctrl.Send(addr, emailAuth, emailFrom, emailTo, msg)
+
+	if err != nil {
+		errorCommon.RaiseInternalServerError(c, err, location, "Failed to send daily alert")
 		return
 	}
 
-	var (
-		failure = requestBody.Message.Data.ParseFailure
-		client  = ctrl.Clients.GetSg()
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Daily alert successfully sent")})
+}
 
-		from    = mail.NewEmail("NFT Marketplace Staging", "noah.mcgill@merkleroot.co")
-		subject = fmt.Sprintf("Max Retries Reached for Failure with Document ID of %s", requestBody.Message.Data.DocID)
+func (ctrl Controller) getFailures(c *gin.Context) string {
+	var response string
 
-		plainTextContent = fmt.Sprintf(`
-			The Event Parser Service has failed to parse an event for a tokenId of %s on contract %s after 12 retries. Parsing of this event will no longer 
-			be retried, and a record of this failure has been added to the "inactiveParseFailures" collection in Firestore.
-		`, failure.TokenID, failure.Contract)
+	collection := ctrl.Clients.GetMdb().Database(ctrl.Env.Secrets.DB_NAME).Collection("failures")
 
-		htmlContent = fmt.Sprintf(`
-			<h4>Max Retries Reached for Failure with Document ID of %s</h4>
-			<p>
-				The Event Parser Service has failed to parse an event for a tokenId of %s on contract %s after 12 retries. 
-				Parsing of this event will no longer be retried, and a record of this failure has been added to the "inactiveParseFailures" collection in Firestore.
-				<br />
-			</p>
-			<p>
-				To debug:
-				<ul>
-					<li>Go to Firestore</li>
-					<li>Go to the inactiveParseFailures collection</li>
-					<li>Find the document with the ID of %s</li>
-					<li>Read the "error" field to find out what error occurred</li>
-				</ul>
-			</p>
-			<p>
-				This parsing failure will not be retried again.
-			</p>
-		`, requestBody.Message.Data.DocID, failure.TokenID, failure.Contract, requestBody.Message.Data.DocID)
+	result, _ := collection.Find(c, "test")
 
-		// define the recipient email addresses - just leaving these hard-coded for now
-		contacts = [3]struct {
-			name  string
-			email string
-		}{
-			{
-				name:  "Noah McGill",
-				email: "noah.mcgill@merkleroot.co",
-			},
-			{
-				name:  "Brandon Brown",
-				email: "brandon.brown@merkleroot.co",
-			},
-			{
-				name:  "Brandyn Thibault",
-				email: "brandyn.thibault@merkleroot.co",
-			},
+	for result.Next(c) {
+		var failure Failure
+		if err := result.Decode(&failure); err != nil {
+			log.Fatal(err)
 		}
-	)
-
-	for _, contact := range contacts {
-		var (
-			to      = mail.NewEmail(contact.name, contact.email)
-			message = mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-		)
-
-		if _, err := client.Send(message); err != nil {
-			msg := fmt.Sprintf("Error while sending maxRetry email notification about token %s on contract %s to address %s via SendGrid", failure.TokenID, failure.Contract, contact.email)
-
-			errorCommon.RaiseInternalServerError(c, err, location, msg)
-			return
-		}
+		response = fmt.Sprintf("%v %v\n", response, result)
+	}
+	if err := result.Err(); err != nil {
+		log.Fatal(err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Parsing event failure notifications for token %s on contract %s successfully sent", failure.TokenID, failure.Contract)})
+	return response
 }
