@@ -65,7 +65,7 @@ env:
   MDB_USER_SECRET_NAME: mdb-user
   MDB_PASS_SECRET_NAME: mdb-pass
   DB_SECRET_NAME: mdb-cluster-domain
-  PORT: 587
+  SMTP_PORT: 587
 
 jobs:
   deploy:
@@ -125,7 +125,7 @@ jobs:
             MDB_USER_SECRET_NAME=${{ env.MDB_USER_SECRET_NAME }}
             MDB_PASS_SECRET_NAME:=${{ env.MDB_PASS_SECRET_NAME }}
             DB_SECRET_NAME=${{ env.DB_SECRET_NAME }}
-            PORT=${{ env.PORT }}
+            SMTP_PORT=${{ env.SMTP_PORT }}
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
