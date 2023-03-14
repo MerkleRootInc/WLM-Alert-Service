@@ -80,7 +80,6 @@ func InitializeClientMocks(mock *test.ClientMock, c *gomock.Controller) {
 		Redis:   test.RedisMock{},
 		Sm:      test.SmMock{},
 		Sg:      test.SgMock{},
-		Gmail:   test.GmailMock{Client: test.NewMockIGmailClient(c)},
 	}
 
 }
