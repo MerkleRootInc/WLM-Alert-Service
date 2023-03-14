@@ -43,6 +43,9 @@ func InitClients(clients client.IClients, err common.ClientInitErr) gin.HandlerF
 			c.Abort()
 
 			return
+		} else if err.Secrets != nil {
+			common.RaiseAlertErr(c, errOpts, err.Secrets)
+			c.Abort()
 		}
 
 		c.Next()
