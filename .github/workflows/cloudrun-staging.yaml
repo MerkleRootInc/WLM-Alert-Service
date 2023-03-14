@@ -120,7 +120,12 @@ jobs:
             PUB_SUB_TOPIC_ID=${{ env.PUB_SUB_TOPIC_ID }}
             ENVIRONMENT=${{ env.ENVIRONMENT }}
             GCP_PROJECT_ID=${{ env.PROJECT_ID }}
-            LAND_ADDRESS=${{ env.LAND_ADDRESS }}
+            GMAIL_USER_SECRET_NAME=${{ env.GMAIL_USER_SECRET_NAME }}
+            GMAIL_PASS_SECRET_NAME=${{ env.GMAIL_PASS_SECRET_NAME }}
+            MDB_USER_SECRET_NAME=${{ env.MDB_USER_SECRET_NAME }}
+            MDB_PASS_SECRET_NAME:=${{ env.MDB_PASS_SECRET_NAME }}
+            DB_SECRET_NAME=${{ env.DB_SECRET_NAME }}
+            PORT=${{ env.PORT }}
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
