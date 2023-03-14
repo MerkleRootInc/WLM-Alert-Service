@@ -2,7 +2,7 @@
 FROM golang:1.19-alpine AS builder
 
 # install ssh client and git
-RUN apk add --no-cache openssh-client git
+RUN apk add --no-cache gcc musl-dev openssh-client git
 
 # needed for unit tests
 ENV CGO_ENABLED=0
@@ -21,9 +21,7 @@ RUN --mount=type=ssh go mod download
 
 COPY . ./
 
-RUN go test -v ./...
-
-RUN go build -o /alert-service
+RUN go test -v ./... && go build -o /alert-service
 
 FROM alpine:latest
 WORKDIR /
